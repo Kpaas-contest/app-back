@@ -1,0 +1,16 @@
+# CleanLink ERD v0.1
+
+## 핵심 테이블
+- **users**: 사용자 정보
+- **jobs**: 작업 정보 (쓰레기 수거 작업)
+- **vehicles**: 차량 정보 (걷는 사람 포함)
+- **routes**: 경로 정보 (수거 경로)
+- **route_stops**: 경로 내 각 지점
+- **telemetries**: 사용자의 걸음 수 기록
+- **safety_alerts**: 날씨 및 안전 알림 기록
+
+## 관계
+- **vehicles**는 **users**와 1:N 관계 (작업자 배정)
+- **routes**는 **vehicles**와 1:N 관계 (경로)
+- **route_stops**는 **routes**와 1:N 관계, **jobs**와 1:N 관계 (작업 지점)
+- **telemetries**, **safety_alerts**는 **users**와 1:N 관계 (사용자별 데이터)

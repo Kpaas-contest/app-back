@@ -1,0 +1,72 @@
+Table users {
+  id int [pk]
+  email varchar
+  password_hash varchar
+  role varchar
+  created_at timestamptz
+}
+
+Table jobs {
+  id int [pk]
+  name varchar
+  lat decimal(9,6)
+  lng decimal(9,6)
+  service_min int
+  priority int
+  tw_start time
+  tw_end time
+  date date
+  status varchar
+}
+
+Table vehicles {
+  id int [pk]
+  type varchar
+  capacity int
+  depot_lat decimal(9,6)
+  depot_lng decimal(9,6)
+  worker_id int
+}
+
+Table routes {
+  id int [pk]
+  date date
+  vehicle_id int
+  distance_km numeric(8,2)
+  duration_min int
+  score numeric(4,2)
+}
+
+Table route_stops {
+  id int [pk]
+  route_id int
+  seq int
+  job_id int
+  eta_ts timestamptz
+  etc_min int
+  dump_visit bool
+}
+
+Table telemetries {
+  id int [pk]
+  user_id int
+  ts timestamptz
+  steps_delta int
+  session_min int
+}
+
+Table safety_alerts {
+  id int [pk]
+  user_id int
+  ts timestamptz
+  type varchar
+  level varchar
+  message varchar
+}
+
+Ref: vehicles.worker_id > users.id
+Ref: routes.vehicle_id > vehicles.id
+Ref: route_stops.route_id > routes.id
+Ref: route_stops.job_id > jobs.id
+Ref: telemetries.user_id > users.id
+Ref: safety_alerts.user_id > users.id
