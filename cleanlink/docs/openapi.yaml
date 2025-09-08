@@ -1,0 +1,231 @@
+openapi: 3.0.3
+info:
+  title: CleanLink API
+  version: "0.1.0"
+servers:
+  - url: http://127.0.0.1:8000
+paths:
+  /optimize:
+    post:
+      summary: Create optimized routes
+      description: >
+        This endpoint accepts a list of jobs and vehicles and returns the optimized route with sequence.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  format: date
+                  example: "2025-10-01"
+                area:
+                  type: string
+                  example: "SEOUL-XX"
+                vehicles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 101
+                      type:
+                        type: string
+                        example: "WALK"
+                      capacity:
+                        type: integer
+                        example: 50
+                      depot_lat:
+                        type: number
+                        format: float
+                        example: 37.56
+                      depot_lng:
+                        type: number
+                        format: float
+                        example: 126.97
+                jobs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "Bin-A"
+                      lat:
+                        type: number
+                        format: float
+                        example: 37.57
+                      lng:
+                        type: number
+                        format: float
+                        example: 126.98
+                      service_min:
+                        type: integer
+                        example: 4
+                      priority:
+                        type: integer
+                        example: 3
+                      tw_start:
+                        type: string
+                        format: time
+                        example: "07:30"
+                      tw_end:
+                        type: string
+                        format: time
+                        example: "11:00"
+                      date:
+                        type: string
+                        format: date
+                        example: "2025-10-01"
+                      status:
+                        type: string
+                        example: "OPEN"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  routes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        vehicle_id:
+                          type: integer
+                        distance_km:
+                          type: number
+                          format: float
+                        duration_min:
+                          type: integer
+                        score:
+                          type: number
+                          format: float
+                  route_stops:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        route_id:
+                          type: integer
+                        seq:
+                          type: integer
+                        job_id:
+                          type: integer
+                        eta_ts:
+                          type: string
+                          format: date-time
+                        etc_min:
+                          type: integer
+                        dump_visit:
+                          type: boolean
+
+  /safety/bulletin:
+    get:
+      summary: Get safety bulletin for a specific area
+      parameters:
+        - in: query
+          name: area
+          required: true
+          schema:
+            type: string
+            example: "SEOUL-XX"
+      responses:
+        "200":
+          description: Safety alert response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  heat:
+                    type: object
+                    properties:
+                      level:
+                        type: string
+                        example: "WARN"
+                  ice:
+                    type: object
+                    properties:
+                      level:
+                        type: string
+                        example: "OK"
+                  rain:
+                    type: object
+                    properties:
+                      level:
+                        type: string
+                        example: "ALERT"
+                  guidance:
+                    type: array
+                    items:
+                      type: string
+                      example: "속도 30% 감속"
+
+  /telemetry/steps:
+    post:
+      summary: Report steps telemetry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ts:
+                  type: string
+                  format: date-time
+                  example: "2025-10-01T02:10:00Z"
+                steps_delta:
+                  type: integer
+                  example: 1200
+                session_min:
+                  type: integer
+                  example: 45
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+
+  /rest/recommendation:
+    get:
+      summary: Get rest recommendation for a user
+      parameters:
+        - in: query
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Rest recommendation response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  suggested_at:
+                    type: string
+                    format: date-time
+                    example: "2025-10-01T02:20:00Z"
+                  reason:
+                    type: string
+                    example: "FATIGUE_OR_HEAT"
