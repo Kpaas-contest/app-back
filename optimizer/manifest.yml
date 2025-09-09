@@ -1,0 +1,6 @@
+﻿applications:
+- name: mvp-optimizer
+  memory: 1G
+  buildpacks: [python_buildpack]
+  env: { PORT: 8080 }
+  random-route: true

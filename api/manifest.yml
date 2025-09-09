@@ -1,0 +1,6 @@
+﻿applications:
+- name: mvp-api
+  memory: 512M
+  buildpacks: [python_buildpack]
+  env: { PORT: 8080 }
+  random-route: true
