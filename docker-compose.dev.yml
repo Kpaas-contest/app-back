@@ -1,0 +1,33 @@
+﻿version: "3.9"
+
+services:
+  optimizer:
+    build:
+      context: .
+      dockerfile: cleanlink/services/optimizer/Dockerfile
+    container_name: cleanlink-optimizer
+    ports:
+      - "8001:8001"
+    volumes:
+      # 리포 전체를 /app에 마운트 → 최상위 'cleanlink' 패키지를 인식
+      - ./:/app
+      # .env는 읽기 전용으로 전달
+      - ./.env:/app/.env:ro
+    command: uvicorn cleanlink.services.optimizer.app:app --host 0.0.0.0 --port 8001 --reload
+
+  api:
+    build:
+      context: .
+      dockerfile: cleanlink/services/api/Dockerfile
+    container_name: cleanlink-api
+    environment:
+      # 컨테이너 네트워크에서 optimizer 도메인으로 접근
+      - OPTIMIZER_URL=http://optimizer:8001
+    depends_on:
+      - optimizer
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+      - ./.env:/app/.env:ro
+    command: uvicorn cleanlink.services.api.app:app --host 0.0.0.0 --port 8000 --reload
