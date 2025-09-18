@@ -1,0 +1,6 @@
+﻿fastapi
+uvicorn[standard]
+ortools
+httpx
+python-dotenv
+pydantic
